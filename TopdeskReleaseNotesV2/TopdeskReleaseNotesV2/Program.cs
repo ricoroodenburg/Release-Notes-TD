@@ -14,6 +14,9 @@ builder.Services.AddHttpClient();
 // Radzen
 builder.Services.AddRadzenComponents();
 
+builder.Services.AddControllers();
+
+
 
 var app = builder.Build();
 
@@ -38,5 +41,7 @@ app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()
     .AddInteractiveWebAssemblyRenderMode()
     .AddAdditionalAssemblies(typeof(TopdeskReleaseNotesV2.Client._Imports).Assembly);
+
+app.MapControllers(); // << Zorg dat dit er staat
 
 app.Run();

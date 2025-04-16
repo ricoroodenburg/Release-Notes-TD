@@ -1,9 +1,11 @@
 ﻿@page "/"
 @inject HttpClient Http
 @rendermode InteractiveAuto
+@inject NavigationManager NavigationManager
 
 @using Newtonsoft.Json
 @using TopdeskReleaseNotesV2.Models
+
 
 <style>
     .rz-grid-table {
@@ -14,7 +16,7 @@
 <PageTitle>Release Notes</PageTitle>
 <RadzenText TextStyle="TextStyle.H5" TagName="TagName.H3">Release Notes TOPdesk</RadzenText>
 <RadzenStack Gap="1rem">
-    <RadzenDataGrid Style="height:90vh; color:#525252" ShowColumnTitleAsTooltip=false CellRender="@CellRender" AllowMultiColumnSorting="true" ShowMultiColumnSortingIndex="true" AllowColumnPicking="true" AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.CheckBoxList" AllowSorting="true" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Center" ShowPagingSummary="true" Data="@notes" AllowGrouping="true" Render="@OnRender" @bind-Value=@selectedNotes AllowRowSelectOnRowClick=false>
+    <RadzenDataGrid Style="height:85vh; color:#525252" ShowColumnTitleAsTooltip=false CellRender="@CellRender" AllowMultiColumnSorting="true" ShowMultiColumnSortingIndex="true" AllowColumnPicking="true" AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.CheckBoxList" AllowSorting="true" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Center" ShowPagingSummary="true" Data="@notes" AllowGrouping="true" Render="@OnRender" @bind-Value=@selectedNotes AllowRowSelectOnRowClick=false>
         <EmptyTemplate>
             <p style="color: #525252; font-size: 24px; text-align: center; margin: 2rem;">No records to display.</p>
         </EmptyTemplate>
@@ -47,7 +49,7 @@
 
     void CellRender(DataGridCellRenderEventArgs<Note> args)
     {
- 
+
         if (args.Data.attentions?.highlight == true)
         {
             args.Attributes.Add("style", "background-color: #dcf1ef;");
@@ -55,30 +57,11 @@
 
     }
 
-
     protected override async Task OnInitializedAsync()
     {
-        /*
-        Console.WriteLine("Test");
-
-        // Ophalen van de data van de API
-        var url = "https://releasenotes.topdesk.com/v1/releasenotes/releases";
-        var root = await Http.GetFromJsonAsync<Root>(url);
-
-        // Als root niet null is, zetten we de 'notes' lijst
-        notes = root?.notes ?? new List<Note>();
-        */
-        List<Note> notes = new List<Note>();
-
-        List<Note> notesFromApi = await GetNotesFromUrl("https://releasenotes.topdesk.com/api/v1/releasenotes/releases", "API");
-        List<Note> notesFromFeature = await GetNotesFromUrl("https://releasenotes.topdesk.com/v1/releasenotes/releases", "Feature");
-
-        notes.AddRange(notesFromApi);
-        notes.AddRange(notesFromFeature);
-
-        this.notes = notes.OrderByDescending(n => n.releaseDate).ToList(); // of andere sortering
-
-        }
+        string baseUrl = NavigationManager.BaseUri;
+        notes = await Http.GetFromJsonAsync<List<Note>>($"{baseUrl}api/ReleaseNotes");
+    }
 
 
     void OnRender(DataGridRenderEventArgs<Note> args)
@@ -88,31 +71,6 @@
             args.Grid.Groups.Add(new GroupDescriptor() { Property = "releaseDate", SortOrder = SortOrder.Descending, Title = "Release Date" });
             StateHasChanged();
         }
-    }
-
-    private async Task<List<Note>> GetNotesFromUrl(string url, string sourceTag)
-    {
-        using HttpClient httpClient = new HttpClient();
-        var response = await httpClient.GetStringAsync(url);
-        var root = JsonConvert.DeserializeObject<Root>(response);
-    
-        /*
-        Stream stream = await httpClient.GetStreamAsync(url);
-        Root root = await JsonSerializer.DeserializeAsync<Root>(stream, new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            });
-        */
-        if (root?.notes != null)
-        {
-            foreach (Note note in root.notes)
-            {
-                note.SourceTag = sourceTag;
-            }
-            return root.notes;
-        }
-
-        return new List<Note>();
     }
 
 }
