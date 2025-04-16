@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Serilog.Extensions.Logging.File" Version="3.0.0" />
     <ProjectReference Include="..\TopdeskReleaseNotesV2.Client\TopdeskReleaseNotesV2.Client.csproj" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.15" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />

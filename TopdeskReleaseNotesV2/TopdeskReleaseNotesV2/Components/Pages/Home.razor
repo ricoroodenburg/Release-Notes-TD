@@ -1,0 +1,86 @@
+﻿@page "/homeold"
+@inject HttpClient Http
+@rendermode InteractiveAuto
+@inject NavigationManager NavigationManager
+
+@using Newtonsoft.Json
+@using TopdeskReleaseNotesV2.Models
+
+
+<style>
+    .rz-grid-table {
+    width: unset;
+    }
+</style>
+
+<PageTitle>Release Notes</PageTitle>
+<RadzenText TextStyle="TextStyle.H5" TagName="TagName.H3">Release Notes TOPdesk</RadzenText>
+<RadzenStack Gap="1rem">
+    <RadzenDataGrid Style="height:85vh; color:#525252" ShowColumnTitleAsTooltip=false CellRender="@CellRender" AllowMultiColumnSorting="true" ShowMultiColumnSortingIndex="true" AllowColumnPicking="true" AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.CheckBoxList" AllowSorting="true" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Center" ShowPagingSummary="true" Data="@notes" AllowGrouping="true" Render="@OnRender" @bind-Value=@selectedNotes AllowRowSelectOnRowClick=false>
+        <EmptyTemplate>
+            <p style="color: #525252; font-size: 24px; text-align: center; margin: 2rem;">No records to display.</p>
+        </EmptyTemplate>
+        <Columns>
+            <RadzenDataGridColumn Property="@nameof(Note.release)" Title="Version" Width="5" MaxWidth="5" />
+            <RadzenDataGridColumn Property="@nameof(Note.releaseDate)" Title="Release Date" FormatString="{0:d}" Visible=false />
+            <RadzenDataGridColumn Property="@nameof(Note.description)" Title="Description" Groupable=false>
+                <Template Context="data">
+                    <div style="white-space: normal;" @onclick:stopPropagation="true">
+                        @((MarkupString)data.descriptionHtml)
+                    </div>
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn Property="@nameof(Note.category)" Title="Category" />
+            <RadzenDataGridColumn Property="@nameof(Note.SourceTag)" Title="Source" />
+            <RadzenDataGridColumn Property=hosting.saas Title="SaaS"/>
+            <RadzenDataGridColumn Property=hosting.onpremisesvirtualappliance Title="Virtual Appliance" />
+            <RadzenDataGridColumn Property=isTosNote Title="TOS" HeaderTooltip="True: Indicates the old module is being used (legacy system). False: Indicates the new service architecture is being used (modern system)."  />
+        </Columns>
+    </RadzenDataGrid>
+</RadzenStack>
+
+
+@code {
+
+    private IList<Note> notes = new List<Note>();
+    private IList<Note> selectedNotes = new List<Note>();
+
+    //Density Density = Density.Default;
+
+    void CellRender(DataGridCellRenderEventArgs<Note> args)
+    {
+
+        if (args.Data.attentions?.highlight == true)
+        {
+            args.Attributes.Add("style", "background-color: #dcf1ef;");
+        }
+
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            // Gebruik de al ingestelde base URL
+            string baseUrl = NavigationManager.BaseUri;
+
+            // Haal de gegevens op van de API
+            notes = await Http.GetFromJsonAsync<List<Note>>($"{baseUrl}api/ReleaseNotes");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error: {ex.Message}");
+        }
+    }
+
+
+    void OnRender(DataGridRenderEventArgs<Note> args)
+    {
+        if (args.FirstRender)
+        {
+            args.Grid.Groups.Add(new GroupDescriptor() { Property = "releaseDate", SortOrder = SortOrder.Descending, Title = "Release Date" });
+            StateHasChanged();
+        }
+    }
+
+}

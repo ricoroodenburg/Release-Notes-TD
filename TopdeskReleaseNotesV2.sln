@@ -1,13 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.13.35931.197 d17.13
+VisualStudioVersion = 17.13.35931.197
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TopdeskReleaseNotesV2", "TopdeskReleaseNotesV2\TopdeskReleaseNotesV2\TopdeskReleaseNotesV2.csproj", "{FF4FF940-6F6B-44D8-8C81-192ADD488EC0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TopdeskReleaseNotesV2.Client", "TopdeskReleaseNotesV2\TopdeskReleaseNotesV2.Client\TopdeskReleaseNotesV2.Client.csproj", "{5F6F1295-5893-400D-B79E-55ECBF6FEFCF}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TopdeskReleaseNotesV2.Shared", "TopdeskReleaseNotesV2.Shared\TopdeskReleaseNotesV2.Shared.csproj", "{6110AD8A-A115-49CF-8E0C-5B32CF08C4BF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +21,6 @@ Global
 		{5F6F1295-5893-400D-B79E-55ECBF6FEFCF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5F6F1295-5893-400D-B79E-55ECBF6FEFCF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5F6F1295-5893-400D-B79E-55ECBF6FEFCF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6110AD8A-A115-49CF-8E0C-5B32CF08C4BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6110AD8A-A115-49CF-8E0C-5B32CF08C4BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6110AD8A-A115-49CF-8E0C-5B32CF08C4BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6110AD8A-A115-49CF-8E0C-5B32CF08C4BF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
