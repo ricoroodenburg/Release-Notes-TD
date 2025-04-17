@@ -50,11 +50,11 @@
                         <RadzenDataGridColumn Property="@nameof(Note.hosting)" Title="Hosting" Filterable=false>
                             <Template Context="data">
                                 @if(data.hosting.saas){
-                                    <RadzenBadge Shade="Shade.Light" BadgeStyle="BadgeStyle.Success" Text="SAAS" />
+                                    <RadzenBadge Shade="Shade.Light" BadgeStyle="BadgeStyle.Success" Text="SAAS" style="margin-right: 10px;" />
                                 }
                                 @if (data.hosting.onpremisesvirtualappliance)
                                 {
-                                    <RadzenBadge Shade="Shade.Light" BadgeStyle="BadgeStyle.Info" Text="Virtual Appliance" />
+                                        <RadzenBadge Shade="Shade.Light" BadgeStyle="BadgeStyle.Info" Text="Virtual Appliance" style="margin-right: 10px;" />
                                 }
                             </Template>
                         </RadzenDataGridColumn>
