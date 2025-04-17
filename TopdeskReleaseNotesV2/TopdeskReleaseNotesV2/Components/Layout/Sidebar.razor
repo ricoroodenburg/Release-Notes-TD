@@ -1,0 +1,57 @@
+﻿@rendermode InteractiveAuto
+@inject DialogService DialogService
+@inject NavigationManager NavigationManager
+
+
+<RadzenHeader style="position: relative">
+    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween" Gap="0" style="width: 100%">
+        <!-- Left section -->
+        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0">
+            <RadzenSidebarToggle Click="@(() => sidebarExpanded = !sidebarExpanded)" />
+            <RadzenLabel Text="Release Notes" />
+        </RadzenStack>
+
+        <!-- Right section -->
+        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" style="margin-right: 10px;">
+            <RadzenAppearanceToggle />
+        </RadzenStack>
+    </RadzenStack>
+</RadzenHeader>
+<RadzenSidebar Responsive="false" @bind-Expanded="@sidebarExpanded" style="position: absolute; z-index: 3">
+    <RadzenStack AlignItems="AlignItems.End" class="rz-p-2">
+        <RadzenButton Icon="west" Variant="Variant.Text" ButtonStyle="ButtonStyle.Primary" Click="@(() => sidebarExpanded = false)" />
+    </RadzenStack>
+    <RadzenPanelMenu>
+        <RadzenPanelMenuItem Text="Home" Icon="home" Click="@(()=>NavigationManager.NavigateTo("/"))" />
+        <RadzenPanelMenuItem Text="Status Page" Icon="open_in_new" Click="@(() => OpenUrl("https://status.topdesk.com"))" />
+        <RadzenPanelMenuItem Text="My Topdesk" Icon="open_in_new" Click="@(() => OpenUrl("https://my.topdesk.com"))" />
+        <RadzenPanelMenuItem Text="Release Notes" Icon="edit_note" Click="@(()=>NavigationManager.NavigateTo("/release-notes"))" />
+        <RadzenPanelMenuItem Text="About" Icon="info" Click="@ShowDialog" />
+    </RadzenPanelMenu>
+</RadzenSidebar>
+@if (sidebarExpanded)
+{
+    <div @onclick="@(() => sidebarExpanded = false)" class="rz-dialog-mask" style="position: absolute; z-index: 2"></div>
+}
+@code {
+    bool sidebarExpanded = false;
+
+    async Task ShowDialog()
+    {
+        await DialogService.OpenAsync("About", ds =>
+    @<RadzenStack Gap="1.5rem">
+        <p>Version 2504.4-beta</p>
+        <p>This product is not developed, supported, or affiliated with TOPdesk. Best effort only.</p>
+        <RadzenButton Text="Close" Click="() => ds.Close(true)" Style="width: 100px;" />
+    </RadzenStack>
+    );
+    }
+
+    [Inject] IJSRuntime JS { get; set; }
+
+    private async Task OpenUrl(string url)
+    {
+        //NavigationManager.NavigateTo(url);
+        await JS.InvokeVoidAsync("open", url, "_blank");
+    }
+}

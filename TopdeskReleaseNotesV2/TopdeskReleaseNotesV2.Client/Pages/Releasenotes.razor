@@ -1,0 +1,59 @@
+﻿@page "/release-notes"
+@rendermode InteractiveAuto
+@using Radzen
+@using Radzen.Blazor
+
+<h3>Release Notes</h3>
+    <RadzenAccordion Multiple="true">
+        <Items>
+            <RadzenAccordionItem Text="2504.4-beta" CollapseTitle="Collapse release."
+                                 ExpandTitle="Expand orders." CollapseAriaLabel="Collapse the release details."
+                                 ExpandAriaLabel="Expand the release details." Selected=true>
+                <RadzenStack>
+                    <ul>
+                    <li><strong>Added a release notes page for this webapp:</strong><br>A dedicated page has been added to the web application where users can view all release notes, making it easier to track updates and improvements to the app.</li>
+                        <li><strong>Redesign to Material theme with TD colors:</strong><br>A complete redesign of the app interface using the Material theme, incorporating TD's color scheme for a more modern and consistent look.</li>
+                        <li><strong>Dark mode option:</strong><br> Users can now switch to dark mode, making the application easier on the eyes in low-light environments.</li>
+                        <li><strong>Save datagrid filters, order, and grouping:</strong><br> The settings for filtering, sorting, and grouping in the datagrid are now saved, ensuring a more consistent experience when navigating between views.</li>
+                        <li><strong>Icons in buttons for better accessibility:</strong><br> Icons have been added to buttons, making the app more accessible for users by providing visual cues for each action.</li>
+                        <li><strong>Labels inside datagrid instead of text for better readability:</strong><br> Labels are now used inside the datagrid to make the information more readable and concise for users.</li>
+                        <li><strong>Added category in release note dialog in calendar view:</strong><br> A new category field has been added to the release note dialog in the calendar view, helping users better categorize events and notes.</li>
+                        <li><strong>Removed Day view in calendar:</strong><br> The Day view option has been removed from the calendar, simplifying the user experience and improving navigation.</li>
+                    </ul>
+                </RadzenStack>
+            </RadzenAccordionItem>
+            <RadzenAccordionItem Text="2504.3-beta" CollapseTitle="Collapse release."
+                                 ExpandTitle="Expand orders." CollapseAriaLabel="Collapse the release details."
+                                 ExpandAriaLabel="Expand the release details.">
+                <RadzenStack>
+                    <ul>
+                        <ul>
+                            <li><strong>Added calendar overview:</strong><br>A calendar view has been added so users can quickly see which version was released on which day. There is also an option to click on a date for more detailed information about the release.</li>
+                            <li><strong>Added "number of items" option in the datagrid (list view):</strong><br>Users can now specify the number of items they want to see per page in the datagrid, offering more flexibility and control over the display.</li>
+                        </ul>
+                    </ul>
+                </RadzenStack>
+            </RadzenAccordionItem>
+            <RadzenAccordionItem Text="2504.2-beta" CollapseTitle="Collapse release."
+                                 ExpandTitle="Expand orders." CollapseAriaLabel="Collapse the release details."
+                                 ExpandAriaLabel="Expand the release details.">
+                <RadzenStack>
+                    <ul>
+                        <ul>
+                            <li><strong>Added "Status Page" and "My Topdesk" buttons:</strong><br>Two new buttons have been added to allow users to easily navigate to the Status Page and My Topdesk websites directly from the application.</li>
+                            <li><strong>Backend update - Homepage moved to client-side:</strong><br>The homepage logic has been moved to the client side, improving performance and making the page load faster.</li>
+                        </ul>
+                    </ul>
+                </RadzenStack>
+            </RadzenAccordionItem>
+            <RadzenAccordionItem Text="2504.1-beta" CollapseTitle="Collapse release."
+                                 ExpandTitle="Expand orders." CollapseAriaLabel="Collapse the release details."
+                                 ExpandAriaLabel="Expand the release details.">
+                <RadzenStack>
+                    <ul>
+                        <li><strong>First release:</strong><br>The initial release of the application, featuring a datagrid with default filtering options for improved data navigation.</li>
+                    </ul>
+                </RadzenStack>
+            </RadzenAccordionItem>
+        </Items>
+    </RadzenAccordion>

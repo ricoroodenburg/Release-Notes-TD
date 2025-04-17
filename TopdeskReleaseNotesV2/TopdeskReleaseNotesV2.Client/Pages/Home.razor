@@ -3,10 +3,12 @@
 @rendermode InteractiveAuto
 @inject NavigationManager NavigationManager
 @inject DialogService DialogService
+@inject IJSRuntime JSRuntime
 
-@using Newtonsoft.Json
+@using System.Text.Json
 @using TopdeskReleaseNotesV2.Models
 
+<PageTitle>Release Notes</PageTitle>
 
 <style>
     .rz-grid-table {
@@ -14,13 +16,12 @@
     }
 </style>
 
-<PageTitle>Release Notes</PageTitle>
-<!-- <RadzenText TextStyle="TextStyle.H5" TagName="TagName.H3">Release Notes TOPdesk</RadzenText> -->
+
 <RadzenTabs RenderMode="TabRenderMode.Server" @bind-SelectedIndex=@selectedIndex>
     <Tabs>
-        <RadzenTabsItem Text="Listview">
+        <RadzenTabsItem Text="Listview" Icon="list">
             <RadzenStack Gap="1rem">
-                <RadzenDataGrid Style="height:82vh; color:#525252" ShowColumnTitleAsTooltip=false PageSizeOptions="@pageSizeOptions" CellRender="@CellRender" AllowMultiColumnSorting="true" ShowMultiColumnSortingIndex="true" AllowColumnPicking="true" AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.CheckBoxList" AllowSorting="true" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Center" ShowPagingSummary="true" Data="@notes" AllowGrouping="true" Render="@OnRender" @bind-Value=@selectedNotes AllowRowSelectOnRowClick=false>
+                <RadzenDataGrid Style="height:79vh; color:#525252" AllowColumnReorder="true" ShowGroupExpandColumn=false @bind-Settings="@Settings" ShowColumnTitleAsTooltip=false PageSizeOptions="@pageSizeOptions" CellRender="@CellRender" AllowMultiColumnSorting="true" ShowMultiColumnSortingIndex="true" AllowColumnPicking="true" AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.CheckBoxList" AllowSorting="true" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Center" ShowPagingSummary="true" Data="@notes" AllowGrouping="true" Render="@OnRender" @bind-Value=@selectedNotes AllowRowSelectOnRowClick=false>
                     <EmptyTemplate>
                         <p style="color: #525252; font-size: 24px; text-align: center; margin: 2rem;">No records to display.</p>
                     </EmptyTemplate>
@@ -35,18 +36,48 @@
                             </Template>
                         </RadzenDataGridColumn>
                         <RadzenDataGridColumn Property="@nameof(Note.category)" Title="Category" />
-                        <RadzenDataGridColumn Property="@nameof(Note.SourceTag)" Title="Source" />
-                        <RadzenDataGridColumn Property=hosting.saas Title="SaaS" />
-                        <RadzenDataGridColumn Property=hosting.onpremisesvirtualappliance Title="Virtual Appliance" />
-                        <RadzenDataGridColumn Property=isTosNote Title="TOS" HeaderTooltip="True: Indicates the old module is being used (legacy system). False: Indicates the new service architecture is being used (modern system)." />
+                        <RadzenDataGridColumn Property="@nameof(Note.SourceTag)" Title="Source">
+                            <Template Context="data">
+                                @if(data.SourceTag == "Feature"){
+                                    <RadzenBadge Shade="Shade.Light" BadgeStyle="BadgeStyle.Success" Text="Feature" />
+                                }
+                                @if (data.SourceTag == "API")
+                                {
+                                    <RadzenBadge Shade="Shade.Light" BadgeStyle="BadgeStyle.Info" Text="API" />
+                                }
+                            </Template>
+                        </RadzenDataGridColumn>
+                        <RadzenDataGridColumn Property="@nameof(Note.hosting)" Title="Hosting" Filterable=false>
+                            <Template Context="data">
+                                @if(data.hosting.saas){
+                                    <RadzenBadge Shade="Shade.Light" BadgeStyle="BadgeStyle.Success" Text="SAAS" />
+                                }
+                                @if (data.hosting.onpremisesvirtualappliance)
+                                {
+                                    <RadzenBadge Shade="Shade.Light" BadgeStyle="BadgeStyle.Info" Text="Virtual Appliance" />
+                                }
+                            </Template>
+                        </RadzenDataGridColumn>
+                        <!-- <RadzenDataGridColumn Property=hosting.saas Title="SaaS" />-->
+                        <!-- <RadzenDataGridColumn Property=hosting.onpremisesvirtualappliance Title="Virtual Appliance" />-->
+                        <RadzenDataGridColumn Property=isTosNote Title="TOS" HeaderTooltip="True: Indicates the old module is being used (legacy system). False: Indicates the new service architecture is being used (modern system).">
+                            <Template Context="data">
+                                @if(data.isTosNote){
+                                    <RadzenBadge Shade="Shade.Light" BadgeStyle="BadgeStyle.Success" Text="True" />
+                                }
+                                else
+                                {
+                                    <RadzenBadge Shade="Shade.Light" BadgeStyle="BadgeStyle.Info" Text="False" />
+                                }
+                            </Template>
+                        </RadzenDataGridColumn>
                     </Columns>
                 </RadzenDataGrid>
             </RadzenStack>
         </RadzenTabsItem>
-        <RadzenTabsItem Text="Calendar">
+        <RadzenTabsItem Text="Calendar" Icon="calendar_month">
             <RadzenStack Gap="1rem">
-                <RadzenScheduler @ref=@scheduler SlotRender=@OnSlotRender AppointmentSelect=@OnAppointmentSelect AppointmentRender=@OnAppointmentRender style="height: 768px;" TItem="Appointment" Data=@appointments StartProperty="Start" EndProperty="End" ShowHeader=true TextProperty="Text" SelectedIndex="2">
-                    <RadzenDayView />
+                <RadzenScheduler @ref=@scheduler SlotRender=@OnSlotRender AppointmentSelect=@OnAppointmentSelect AppointmentRender=@OnAppointmentRender style="height: 768px;" TItem="Appointment" Data=@appointments StartProperty="Start" EndProperty="End" ShowHeader=true TextProperty="Text" SelectedIndex="1">
                     <RadzenWeekView />
                     <RadzenMonthView />
                     <RadzenYearView />
@@ -61,13 +92,15 @@
 
 @code {
 
-    // Calander
+    // Datagrid
+    
     IEnumerable<int> pageSizeOptions = new int[] { 10, 20, 30, 50, 100 };
     int selectedIndex = 0;
 
     private IList<Note> notes = new List<Note>();
     private IList<Note> selectedNotes = new List<Note>();
 
+    // Datagrid - Cell Redering
     void CellRender(DataGridCellRenderEventArgs<Note> args)
     {
 
@@ -78,14 +111,72 @@
 
     }
 
+    // Datagrid - Grouping
+    bool isFirstRender = true;
     void OnRender(DataGridRenderEventArgs<Note> args)
     {
-        if (args.FirstRender)
+        if (args.FirstRender && isFirstRender)
         {
+
             args.Grid.Groups.Add(new GroupDescriptor() { Property = "releaseDate", SortOrder = SortOrder.Descending, Title = "Release Date" });
+            isFirstRender = false;
             StateHasChanged();
         }
     }
+
+    // Datagrid - Settings
+    DataGridSettings _settings;
+    public DataGridSettings Settings
+    {
+        get
+        {
+            return _settings;
+        }
+        set
+        {
+            if (_settings != value)
+            {
+                _settings = value;
+                InvokeAsync(SaveStateAsync);
+            }
+        }
+    }
+
+    private async Task LoadStateAsync()
+    {
+        await Task.CompletedTask;
+
+        var result = await JSRuntime.InvokeAsync<string>("window.localStorage.getItem", "Settings");
+        if (!string.IsNullOrEmpty(result))
+        {
+            _settings = JsonSerializer.Deserialize<DataGridSettings>(result);
+        }
+
+
+    }
+
+    private async Task SaveStateAsync()
+    {
+        await Task.CompletedTask;
+
+        await JSRuntime.InvokeVoidAsync("window.localStorage.setItem", "Settings", JsonSerializer.Serialize<DataGridSettings>(Settings));
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await LoadStateAsync();
+            StateHasChanged();
+        }
+    }
+
+    private async Task OnTabChanged(){
+
+        // Sla de instellingen op wanneer de tab verandert
+        await SaveStateAsync();
+    }
+
 
     // Calendar
     RadzenScheduler<Appointment> scheduler;
@@ -115,7 +206,8 @@
                             Text = note.release,
                             highlight = note.attentions.highlight,
                             description = note.description,
-                            descriptionHtml = note.descriptionHtml
+                            descriptionHtml = note.descriptionHtml,
+                            category = note.category
                         };
 
                     // Voeg de afspraak toe aan de lijst van afspraken
@@ -168,12 +260,13 @@
         var result = await DialogService.OpenAsync($"Version {@args.Data.Text}", ds =>
     @<RadzenStack Gap="1.5rem">
         <p>
+            <RadzenBadge Shade="Shade.Light" BadgeStyle="BadgeStyle.Warning" IsPill="true" Text=@args.Data.category />
             <i><div style="white-space: normal;" @onclick:stopPropagation="true">
                 @((MarkupString)args.Data.descriptionHtml)
                 </div>
             </i>
             <br />
-            Released on: @args.Data.Start
+            Released on: @args.Data.Start.ToString("MMMM d, yyyy", System.Globalization.CultureInfo.GetCultureInfo("en-US"))
         </p>
         <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween">
             <RadzenStack Orientation="Orientation.Horizontal">
