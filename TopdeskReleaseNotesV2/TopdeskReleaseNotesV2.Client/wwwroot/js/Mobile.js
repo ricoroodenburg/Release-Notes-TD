@@ -3,5 +3,16 @@
 }
 
 function isAppleWebKit() {
-    return /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
+    // Define variable
+    const ua = navigator.userAgent;
+
+    const isSafari = ua.includes("Safari") &&
+        !ua.includes("Chrome") &&
+        !ua.includes("Chromium") &&
+        !ua.includes("CriOS") &&
+        !ua.includes("Edg"); // ook Edge kan Safari bevatten
+
+    return isSafari;
+
 }
