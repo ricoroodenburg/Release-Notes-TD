@@ -8,6 +8,7 @@ using TopdeskReleaseNotesV2.Functions;
 public class ReleaseNotesController : ControllerBase
 {
     [HttpGet]
+    [HttpHead]
     public async Task<ActionResult<List<Note>>> Get()
     {
         List<Note> apiNotes = await ReleaseNotes.GetNotesFromUrl("https://releasenotes.topdesk.com/api/v1/releasenotes/releases", "API");
