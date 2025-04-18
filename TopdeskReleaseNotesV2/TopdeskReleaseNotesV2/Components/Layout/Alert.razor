@@ -1,0 +1,15 @@
+﻿@rendermode InteractiveAuto
+@inject IJSRuntime JSRuntime
+
+<!--Safari Browser detected-->
+<RadzenAlert AlertStyle="AlertStyle.Warning" Variant="Variant.Flat" Shade="Shade.Lighter" Visible=(safariWebkit)>
+    Currently, Safari (Apple WebKit) is not supported. 
+</RadzenAlert>
+
+@code {
+    private static bool safariWebkit { get; set; }
+    protected async Task OnGet()
+    {
+        safariWebkit = await JSRuntime.InvokeAsync<bool>("isAppleWebKit");
+    }
+}

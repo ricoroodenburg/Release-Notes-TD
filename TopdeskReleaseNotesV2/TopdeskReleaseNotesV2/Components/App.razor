@@ -1,22 +1,44 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <RadzenTheme Theme="material" @rendermode="InteractiveServer" />
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <base href="/" />
-    <link rel="stylesheet" href="bootstrap/bootstrap.min.css" />
-    <link rel="stylesheet" href="TopdeskReleaseNotesV2.styles.css" />
-    <link rel="icon" type="image/png" href="favicon.png" />
-    <link rel="stylesheet" href="app.css" />
-    <script src="_content/Radzen.Blazor/Radzen.Blazor.js?v=@(typeof(Radzen.Colors).Assembly.GetName().Version)"></script>
-    <HeadOutlet />
-</head>
-
-<body>
-    <Routes />
-    <script src="_framework/blazor.web.js"></script>
-</body>
-
+    <head>
+        <RadzenTheme Theme="material" @rendermode="InteractiveServer" />
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <base href="/" />
+        <link rel="stylesheet" href="bootstrap/bootstrap.min.css" />
+        <link rel="stylesheet" href="TopdeskReleaseNotesV2.styles.css" />
+        <link rel="icon" type="image/png" href="favicon.png" />
+        <link rel="stylesheet" href="app.css" />
+        <script src="_content/Radzen.Blazor/Radzen.Blazor.js?v=@(typeof(Radzen.Colors).Assembly.GetName().Version)"></script>
+        <script src="js/Mobile.js"></script>
+        <HeadOutlet />
+    </head>
+    <body>
+        <Routes />
+        <script src="_framework/blazor.web.js"></script>
+    </body>
 </html>
+
+@code {
+
+    [CascadingParameter]
+    private HttpContext HttpContext { get; set; }
+
+    [Inject]
+    private ThemeService ThemeService { get; set; }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        if (HttpContext != null)
+        {
+            var theme = HttpContext.Request.Cookies["MyApplicationTheme"];
+
+            if (!string.IsNullOrEmpty(theme))
+            {
+                ThemeService.SetTheme(theme, false);
+            }
+        }
+    }
+}

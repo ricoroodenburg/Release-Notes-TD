@@ -1,0 +1,68 @@
+﻿@inject DialogService DialogService
+@using TopdeskReleaseNotesV2.Models
+
+<RadzenScheduler @ref=@scheduler SlotRender=@OnSlotRender AppointmentSelect=@OnAppointmentSelect AppointmentRender=@OnAppointmentRender style="height: 768px;" TItem="Appointment" Data=@appointments StartProperty="Start" EndProperty="End" ShowHeader=true TextProperty="Text" SelectedIndex="1">
+    <RadzenWeekView />
+    <RadzenMonthView />
+    <RadzenYearView />
+</RadzenScheduler>
+
+@code {
+
+    [Parameter]
+    public IList<Appointment> appointments { get; set; }
+
+    RadzenScheduler<Appointment> scheduler;
+
+    void OnAppointmentRender(SchedulerAppointmentRenderEventArgs<Appointment> args)
+    {
+        if (args.Data.highlight)
+        {
+            args.Attributes["style"] = "background-color: #ffc910;";
+        }
+        else
+        {
+            args.Attributes["style"] = "background-color: #0a7da0;";
+        }
+    }
+
+    void OnSlotRender(SchedulerSlotRenderEventArgs args)
+    {
+        // Highlight today in month view
+        if (args.View.Text == "Month" && args.Start.Date == DateTime.Today)
+        {
+            args.Attributes["style"] = "background-color: #dcf1ef;";
+        }
+
+        // Highlight working hours (9-18)
+        if ((args.View.Text == "Week" || args.View.Text == "Day") && args.Start.Hour > 8 && args.Start.Hour < 19)
+        {
+            args.Attributes["style"] = "background-color: #dcf1ef;";
+        }
+    }
+
+    async Task OnAppointmentSelect(SchedulerAppointmentSelectEventArgs<Appointment> args)
+    {
+
+        var result = await DialogService.OpenAsync($"Version {@args.Data.Text}", ds =>
+    @<RadzenStack Gap="1.5rem">
+        <p>
+            <RadzenBadge Shade="Shade.Light" BadgeStyle="BadgeStyle.Warning" IsPill="true" Text=@args.Data.category />
+            <i>
+                <div style="white-space: normal;" @onclick:stopPropagation="true">
+                    @((MarkupString)args.Data.descriptionHtml)
+                </div>
+            </i>
+            <br />
+            Released on: @args.Data.Start.ToString("MMMM d, yyyy", System.Globalization.CultureInfo.GetCultureInfo("en-US"))
+        </p>
+        <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween">
+            <RadzenStack Orientation="Orientation.Horizontal">
+                <RadzenButton Text="Close" Click="() => ds.Close(true)" Style="width: 80px;" />
+            </RadzenStack>
+        </RadzenStack>
+    </RadzenStack>);
+
+    }
+
+}

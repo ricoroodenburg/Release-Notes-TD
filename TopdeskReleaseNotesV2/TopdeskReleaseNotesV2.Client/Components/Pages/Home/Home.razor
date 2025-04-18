@@ -1,0 +1,102 @@
+﻿@page "/"
+
+@rendermode InteractiveAuto
+
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
+
+@using TopdeskReleaseNotesV2.Client.Components.Pages.Home.Elements
+@using TopdeskReleaseNotesV2.Models
+
+<PageTitle>TOPdesk Release Notes</PageTitle>
+@if (notes == null)
+{
+    <RadzenStack AlignItems="AlignItems.Center" class="rz-m-12" Gap="2rem">
+        <RadzenProgressBarCircular Value="100" ShowValue="false" Mode="ProgressBarMode.Indeterminate" />
+        <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Loading Release Notes from TOPdesk Website</RadzenText>
+    </RadzenStack>
+}
+else
+{
+    <RadzenTabs RenderMode="TabRenderMode.Server" @bind-SelectedIndex=@selectedIndex>
+        <Tabs>
+            <RadzenTabsItem Text="Listview" Icon="list">
+                <RadzenStack Gap="1rem" Visible=@(!mobile)>
+                    <Datagrid notes="@notes"/>
+                </RadzenStack>
+                <RadzenStack Gap="1rem" Visible=@mobile>
+                    <Listview notes="@notes" />
+                </RadzenStack>
+            </RadzenTabsItem>
+            <RadzenTabsItem Text="Calendar" Icon="calendar_month">
+                <RadzenStack Gap="1rem">
+                    <Calendar appointments="@appointments" />
+                </RadzenStack>
+            </RadzenTabsItem>
+        </Tabs>
+    </RadzenTabs>
+}
+
+@code {
+
+    // Tab settings
+    int selectedIndex = 0;
+
+    // Define ILists
+    private IList<Note> notes = new List<Note>();
+    private IList<Appointment> appointments = new List<Appointment>();
+
+    // On load
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            
+            // Define base URL
+            string baseUrl = NavigationManager.BaseUri;
+
+            // Get notes from internal API
+            notes = await Http.GetFromJsonAsync<List<Note>>($"{baseUrl}api/ReleaseNotes");
+
+            // Notes to appoitments
+            foreach (var note in notes)
+            {
+                if (DateTime.TryParse(note.releaseDate, out DateTime releaseDate))
+                {
+                    var appointment = new Appointment
+                        {
+                            Start = releaseDate.Date,
+                            End = releaseDate.Date.AddDays(1).AddMinutes(-1),
+                            Text = note.release,
+                            highlight = note.attentions.highlight,
+                            description = note.description,
+                            descriptionHtml = note.descriptionHtml,
+                            category = note.category
+                        };
+                    appointments.Add(appointment);
+                }
+                else
+                {
+                    Console.WriteLine($"Error parsing release date for release {note.release}");
+                }
+            }
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error: {ex.Message}");
+        }
+    }   
+
+    private static bool mobile { get; set; }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            // Als de pagina voor het eerst wordt gerenderd, kun je hier je JS-functie aanroepen
+            mobile = await JSRuntime.InvokeAsync<bool>("isMobile", new object[] { });
+            StateHasChanged();
+        }
+    }
+}

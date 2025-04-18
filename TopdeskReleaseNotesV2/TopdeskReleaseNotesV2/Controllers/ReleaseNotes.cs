@@ -13,7 +13,7 @@ public class ReleaseNotesController : ControllerBase
         List<Note> apiNotes = await ReleaseNotes.GetNotesFromUrl("https://releasenotes.topdesk.com/api/v1/releasenotes/releases", "API");
         List<Note> featureNotes = await ReleaseNotes.GetNotesFromUrl("https://releasenotes.topdesk.com/v1/releasenotes/releases", "Feature");
 
-        List<Note> combined = apiNotes.Concat(featureNotes).ToList();
+        List<Note> combined = apiNotes.Concat(featureNotes).OrderByDescending(note => note.releaseDate).ToList();
         return Ok(combined);
     }
 }

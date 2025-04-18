@@ -29,6 +29,13 @@ try {
     // API Controllers
     builder.Services.AddControllers();
 
+    // RadzenCookieThemeService
+    builder.Services.AddRadzenCookieThemeService(options =>
+    {
+        options.Name = "MyApplicationTheme"; // The name of the cookie
+        options.Duration = TimeSpan.FromDays(365); // The duration of the cookie
+    });
+
     builder.Services.AddSingleton<HttpClient>(sp =>
     {
         var handler = new HttpClientHandler()
@@ -38,7 +45,7 @@ try {
         };
 
         return new HttpClient(handler);
-    });
+    });;
 
     var app = builder.Build();
 

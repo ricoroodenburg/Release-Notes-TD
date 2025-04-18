@@ -1,0 +1,158 @@
+﻿@inject IJSRuntime JSRuntime
+
+@using System.Text.Json
+@using TopdeskReleaseNotesV2.Models
+
+<style>
+    .rz-grid-table {
+        width: unset;
+    }
+</style>
+
+<RadzenDataGrid Style="height:79vh; color:#525252" AllowColumnReorder="true" ShowGroupExpandColumn=false @bind-Settings="@Settings" ShowColumnTitleAsTooltip=false PageSizeOptions="@pageSizeOptions" CellRender="@CellRender" AllowMultiColumnSorting="true" ShowMultiColumnSortingIndex="true" AllowColumnPicking="true" AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.CheckBoxList" AllowSorting="true" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Center" ShowPagingSummary="true" Data="@notes" AllowGrouping="true" Render="@OnRender" @bind-Value=@selectedNotes AllowRowSelectOnRowClick=false>
+    <EmptyTemplate>
+        <p style="color: #525252; font-size: 24px; text-align: center; margin: 2rem;">No records to display.</p>
+    </EmptyTemplate>
+    <Columns>
+        <RadzenDataGridColumn Property="@nameof(Note.release)" Title="Version" Width="5" MaxWidth="5" />
+        <RadzenDataGridColumn Property="@nameof(Note.releaseDate)" Title="Release Date" FormatString="{0:d}" Visible=false />
+        <RadzenDataGridColumn Property="@nameof(Note.description)" Title="Description" Groupable=false>
+            <Template Context="data">
+                <div style="white-space: normal;" @onclick:stopPropagation="true">
+                    @((MarkupString)data.descriptionHtml)
+                </div>
+            </Template>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn Property="@nameof(Note.category)" Title="Category" />
+        <RadzenDataGridColumn Property="@nameof(Note.subcategory)" Title="Subcategory" />
+        <RadzenDataGridColumn Property="@nameof(Note.SourceTag)" Title="Source">
+            <Template Context="data">
+                @if (data.SourceTag == "Feature")
+                {
+                    <RadzenBadge Shade="Shade.Light" BadgeStyle="BadgeStyle.Success" Text="Feature" />
+                }
+                @if (data.SourceTag == "API")
+                {
+                    <RadzenBadge Shade="Shade.Light" BadgeStyle="BadgeStyle.Info" Text="API" />
+                }
+            </Template>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn Property="@nameof(Note.hosting)" Title="Hosting" Filterable=false>
+            <Template Context="data">
+                @if (data.hosting.saas)
+                {
+                    <RadzenBadge Shade="Shade.Light" BadgeStyle="BadgeStyle.Success" Text="SAAS" style="margin-right: 10px;" />
+                }
+                @if (data.hosting.onpremisesvirtualappliance)
+                {
+                    <RadzenBadge Shade="Shade.Light" BadgeStyle="BadgeStyle.Info" Text="Virtual Appliance" style="margin-right: 10px;" />
+                }
+            </Template>
+        </RadzenDataGridColumn>
+        <!-- <RadzenDataGridColumn Property=hosting.saas Title="SaaS" />-->
+        <!-- <RadzenDataGridColumn Property=hosting.onpremisesvirtualappliance Title="Virtual Appliance" />-->
+        <RadzenDataGridColumn Property=isTosNote Title="TOS" HeaderTooltip="True: Indicates the old module is being used (legacy system). False: Indicates the new service architecture is being used (modern system).">
+            <Template Context="data">
+                @if (data.isTosNote)
+                {
+                    <RadzenBadge Shade="Shade.Light" BadgeStyle="BadgeStyle.Success" Text="True" />
+                }
+                else
+                {
+                    <RadzenBadge Shade="Shade.Light" BadgeStyle="BadgeStyle.Info" Text="False" />
+                }
+            </Template>
+        </RadzenDataGridColumn>
+    </Columns>
+</RadzenDataGrid>
+
+@code {
+
+    [Parameter]
+    public IList<Note> notes { get; set; }
+
+    // Datagrid
+    IEnumerable<int> pageSizeOptions = new int[] { 10, 20, 30, 50, 100 };
+    int selectedIndex = 0;
+
+    //private IList<Note> notes = new List<Note>();
+    private IList<Note> selectedNotes = new List<Note>();
+
+    // Datagrid - Cell Redering
+    void CellRender(DataGridCellRenderEventArgs<Note> args)
+    {
+
+        if (args.Data.attentions?.highlight == true)
+        {
+            args.Attributes.Add("style", "background-color: #dcf1ef;");
+        }
+
+    }
+
+    // Datagrid - Grouping
+    bool isFirstRender = true;
+    void OnRender(DataGridRenderEventArgs<Note> args)
+    {
+        if (args.FirstRender && isFirstRender)
+        {
+
+            args.Grid.Groups.Add(new GroupDescriptor() { Property = "releaseDate", SortOrder = SortOrder.Descending, Title = "Release Date" });
+            isFirstRender = false;
+            StateHasChanged();
+        }
+    }
+
+    // Datagrid - Settings
+    DataGridSettings _settings;
+    public DataGridSettings Settings
+    {
+        get
+        {
+            return _settings;
+        }
+        set
+        {
+            if (_settings != value)
+            {
+                _settings = value;
+                InvokeAsync(SaveStateAsync);
+            }
+        }
+    }
+
+    private async Task LoadStateAsync()
+    {
+        await Task.CompletedTask;
+
+        var result = await JSRuntime.InvokeAsync<string>("window.localStorage.getItem", "Settings");
+        if (!string.IsNullOrEmpty(result))
+        {
+            _settings = JsonSerializer.Deserialize<DataGridSettings>(result);
+        }
+
+
+    }
+
+    private async Task SaveStateAsync()
+    {
+        await Task.CompletedTask;
+
+        await JSRuntime.InvokeVoidAsync("window.localStorage.setItem", "Settings", JsonSerializer.Serialize<DataGridSettings>(Settings));
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await LoadStateAsync();
+            StateHasChanged();
+        }
+    }
+
+    private async Task OnTabChanged()
+    {
+
+        // Sla de instellingen op wanneer de tab verandert
+        await SaveStateAsync();
+    }
+}

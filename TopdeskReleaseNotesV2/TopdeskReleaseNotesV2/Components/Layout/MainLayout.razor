@@ -3,10 +3,14 @@
 @using Radzen.Blazor
 @using Microsoft.AspNetCore.Identity;
 
+@inject CookieThemeService CookieThemeService
+
 <RadzenDialog />
 <RadzenTooltip />
 <RadzenContextMenu />
 <RadzenComponents @rendermode="InteractiveAuto" />
+
+
 
 <style>
     :root {
@@ -15,6 +19,7 @@
 
     .rz-sidebar-toggle:focus-visible, .rz-sidebar-toggle:hover{
         background: #0a7da0 !important;
+        
     }
 
     .rz-pager-page.rz-state-active{
@@ -31,33 +36,33 @@
         background-color: #dcf1ef !important;
         color: #0a7da0 !important;
     }
+
+    .rz-scheduler-nav-views .rz-button.rz-primary.rz-state-active{
+        background-color: #dcf1ef !important;
+        color: #0a7da0 !important;
+    }
+
+    .rz-year-view .rz-slot .rz-slot-title.rz-has-appointments{
+        background-color: #dcf1ef !important;
+        color: #0a7da0 !important;
+    }
+
+    .rz-tabview-panel{
+        padding: 1rem 0 1rem 0;
+    }
 </style>
 
+
 <RadzenLayout>
+
     <Sidebar />
     <RadzenBody>
+        <Alert/>
         <div class="rz-p-4">
             @Body
         </div>
     </RadzenBody>
 </RadzenLayout>
-<!--
-<div class="page">
-    
-    <main>
-
-        <div class="top-row">
-            <Header />
-        </div>
-        
-        <article class="content px-4">
-            @Body
-        </article>
-    </main>
-
-
-</div>
--->
 
 <div id="blazor-error-ui">
     An unhandled error has occurred.

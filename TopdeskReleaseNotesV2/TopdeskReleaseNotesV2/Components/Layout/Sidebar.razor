@@ -1,19 +1,19 @@
 ﻿@rendermode InteractiveAuto
 @inject DialogService DialogService
 @inject NavigationManager NavigationManager
-
+@inject ThemeService ThemeService
 
 <RadzenHeader style="position: relative">
     <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween" Gap="0" style="width: 100%">
         <!-- Left section -->
         <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0">
             <RadzenSidebarToggle Click="@(() => sidebarExpanded = !sidebarExpanded)" />
-            <RadzenLabel Text="Release Notes" />
+            <RadzenLabel Text="TOPdesk Release Notes" />
         </RadzenStack>
 
         <!-- Right section -->
         <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" style="margin-right: 10px;">
-            <RadzenAppearanceToggle />
+            <RadzenAppearanceToggle/>
         </RadzenStack>
     </RadzenStack>
 </RadzenHeader>
@@ -22,10 +22,16 @@
         <RadzenButton Icon="west" Variant="Variant.Text" ButtonStyle="ButtonStyle.Primary" Click="@(() => sidebarExpanded = false)" />
     </RadzenStack>
     <RadzenPanelMenu>
-        <RadzenPanelMenuItem Text="Home" Icon="home" Click="@(()=>NavigationManager.NavigateTo("/"))" />
-        <RadzenPanelMenuItem Text="Status Page" Icon="open_in_new" Click="@(() => OpenUrl("https://status.topdesk.com"))" />
-        <RadzenPanelMenuItem Text="My Topdesk" Icon="open_in_new" Click="@(() => OpenUrl("https://my.topdesk.com"))" />
-        <RadzenPanelMenuItem Text="Release Notes" Icon="edit_note" Click="@(()=>NavigationManager.NavigateTo("/release-notes"))" />
+        <RadzenPanelMenuItem Text="Home" Icon="home" Click="@(()=>OpenPage("/"))" />
+        <RadzenPanelMenuItem Text="TOPdesk Resources">
+            <RadzenPanelMenuItem Text="Documentation Portal" Icon="open_in_new" Click="@(() => OpenUrl("https://docs.topdesk.com"))" />
+            <RadzenPanelMenuItem Text="My Topdesk" Icon="open_in_new" Click="@(() => OpenUrl("https://my.topdesk.com"))" />
+            <RadzenPanelMenuItem Text="Product Roadmap" Icon="open_in_new" Click="@(() => OpenUrl("https://productroadmap.topdesk.com"))" />
+            <RadzenPanelMenuItem Text="Product Update Blog" Icon="open_in_new" Click="@(() => OpenUrl("https://www.topdesk.com/en/blog/overview/?tst=product-updates"))" />
+            <RadzenPanelMenuItem Text="Status Page" Icon="open_in_new" Click="@(() => OpenUrl("https://status.topdesk.com"))" />
+            <RadzenPanelMenuItem Text="TIP Platform" Icon="open_in_new" Click="@(() => OpenUrl("https://tip.topdesk.com"))" />
+        </RadzenPanelMenuItem>
+        <RadzenPanelMenuItem Text="Release Notes" Icon="edit_note" Click="@(()=>OpenPage("/release-notes"))" />
         <RadzenPanelMenuItem Text="About" Icon="info" Click="@ShowDialog" />
     </RadzenPanelMenu>
 </RadzenSidebar>
@@ -33,25 +39,67 @@
 {
     <div @onclick="@(() => sidebarExpanded = false)" class="rz-dialog-mask" style="position: absolute; z-index: 2"></div>
 }
+
 @code {
     bool sidebarExpanded = false;
 
     async Task ShowDialog()
     {
+        sidebarExpanded = false;
         await DialogService.OpenAsync("About", ds =>
-    @<RadzenStack Gap="1.5rem">
-        <p>Version 2504.4-beta</p>
-        <p>This product is not developed, supported, or affiliated with TOPdesk. Best effort only.</p>
-        <RadzenButton Text="Close" Click="() => ds.Close(true)" Style="width: 100px;" />
-    </RadzenStack>
-    );
+            @<RadzenStack Gap="1.5rem">
+                <p>Version 2504.5-beta</p>
+                <p>This product is not developed, supported, or affiliated with TOPdesk. Best effort only.</p>
+                <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="1rem" Wrap="FlexWrap.Wrap">
+                    <RadzenButton Text="Close" Click="() => ds.Close(true)" Style="width: 100px;" />
+                    <RadzenButton Text="Show on Github" Click="@(() => OpenUrl("https://github.com/ricoroodenburg/Release-Notes-TD"))" Style="width: 200px;" />
+                </RadzenStack>
+            </RadzenStack>
+        );
     }
 
     [Inject] IJSRuntime JS { get; set; }
 
     private async Task OpenUrl(string url)
     {
-        //NavigationManager.NavigateTo(url);
         await JS.InvokeVoidAsync("open", url, "_blank");
+    }
+
+    private async Task OpenPage(string page)
+    {
+        sidebarExpanded = false;
+        NavigationManager.NavigateTo(page);
+
+    }
+
+    // Theme
+    void ChangeTheme(string value)
+    {
+        ThemeService.SetTheme(value);
+    }
+
+    void ChangeRightToLeft(bool value)
+    {
+        ThemeService.SetRightToLeft(value);
+    }
+
+    void ChangeWcag(bool value)
+    {
+        ThemeService.SetWcag(value);
+    }
+
+    protected override void OnInitialized()
+    {
+        ThemeService.ThemeChanged += OnThemeChanged;
+    }
+
+    public void Dispose()
+    {
+        ThemeService.ThemeChanged -= OnThemeChanged;
+    }
+
+    void OnThemeChanged()
+    {
+        Console.WriteLine($"Theme changed to {ThemeService.Theme}");
     }
 }
