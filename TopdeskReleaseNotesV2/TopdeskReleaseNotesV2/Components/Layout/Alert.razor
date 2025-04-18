@@ -7,7 +7,7 @@
 </RadzenAlert>
 
 @code {
-    private static bool safariWebkit { get; set; }
+    private bool safariWebkit { get; set; }
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
