@@ -32,7 +32,7 @@ try {
     // RadzenCookieThemeService
     builder.Services.AddRadzenCookieThemeService(options =>
     {
-        options.Name = "MyApplicationTheme"; // The name of the cookie
+        options.Name = "ReleaseNotesTdTheme"; // The name of the cookie
         options.Duration = TimeSpan.FromDays(365); // The duration of the cookie
     });
 

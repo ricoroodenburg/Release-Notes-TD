@@ -3,13 +3,14 @@
 @using System.Text.Json
 @using TopdeskReleaseNotesV2.Models
 
+
 <style>
     .rz-grid-table {
-        width: unset;
+    width: unset;
     }
 </style>
 
-<RadzenDataGrid Style="height:79vh; color:#525252" AllowColumnReorder="true" ShowGroupExpandColumn=false @bind-Settings="@Settings" ShowColumnTitleAsTooltip=false PageSizeOptions="@pageSizeOptions" CellRender="@CellRender" AllowMultiColumnSorting="true" ShowMultiColumnSortingIndex="true" AllowColumnPicking="true" AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.CheckBoxList" AllowSorting="true" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Center" ShowPagingSummary="true" Data="@notes" AllowGrouping="true" Render="@OnRender" @bind-Value=@selectedNotes AllowRowSelectOnRowClick=false>
+<RadzenDataGrid Style="height:74vh; color:#525252" AllowColumnReorder="true" ShowGroupExpandColumn=false @bind-Settings="@Settings" ShowColumnTitleAsTooltip=false PageSizeOptions="@pageSizeOptions" CellRender="@CellRender" AllowMultiColumnSorting="true" ShowMultiColumnSortingIndex="true" AllowColumnPicking="true" AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.CheckBoxList" AllowSorting="true" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Center" ShowPagingSummary="true" Data="@notes" AllowGrouping="true" Render="@OnRender" @bind-Value=@selectedNotes AllowRowSelectOnRowClick=false>
     <EmptyTemplate>
         <p style="color: #525252; font-size: 24px; text-align: center; margin: 2rem;">No records to display.</p>
     </EmptyTemplate>
@@ -74,8 +75,6 @@
     // Datagrid
     IEnumerable<int> pageSizeOptions = new int[] { 10, 20, 30, 50, 100 };
     int selectedIndex = 0;
-
-    //private IList<Note> notes = new List<Note>();
     private IList<Note> selectedNotes = new List<Note>();
 
     // Datagrid - Cell Redering
@@ -84,7 +83,7 @@
 
         if (args.Data.attentions?.highlight == true)
         {
-            args.Attributes.Add("style", "background-color: #dcf1ef;");
+            args.Attributes.Add("style", "background-color: #dcf1ef");
         }
 
     }
@@ -95,10 +94,9 @@
     {
         if (args.FirstRender && isFirstRender)
         {
-
             args.Grid.Groups.Add(new GroupDescriptor() { Property = "releaseDate", SortOrder = SortOrder.Descending, Title = "Release Date" });
             isFirstRender = false;
-            StateHasChanged();
+            //StateHasChanged();
         }
     }
 
@@ -151,8 +149,6 @@
 
     private async Task OnTabChanged()
     {
-
-        // Sla de instellingen op wanneer de tab verandert
         await SaveStateAsync();
     }
 }

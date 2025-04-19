@@ -2,6 +2,8 @@
 @inject DialogService DialogService
 @inject NavigationManager NavigationManager
 @inject ThemeService ThemeService
+@inject CookieThemeService CookieThemeService
+@using Microsoft.JSInterop;
 
 <RadzenHeader style="position: relative">
     <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween" Gap="0" style="width: 100%">
@@ -48,14 +50,14 @@
         sidebarExpanded = false;
         await DialogService.OpenAsync("About", ds =>
             @<RadzenStack Gap="1.5rem">
-                <p>Version 2504.5-beta</p>
+                <p>Version 2504.6-beta</p>
                 <p>This product is not developed, supported, or affiliated with TOPdesk. Best effort only.</p>
                 <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="1rem" Wrap="FlexWrap.Wrap">
                     <RadzenButton Text="Close" Click="() => ds.Close(true)" Style="width: 100px;" />
                     <RadzenButton Text="Show on Github" Click="@(() => OpenUrl("https://github.com/ricoroodenburg/Release-Notes-TD"))" Style="width: 200px;" />
                 </RadzenStack>
             </RadzenStack>
-        );
+    );
     }
 
     [Inject] IJSRuntime JS { get; set; }
@@ -70,36 +72,5 @@
         sidebarExpanded = false;
         NavigationManager.NavigateTo(page);
 
-    }
-
-    // Theme
-    void ChangeTheme(string value)
-    {
-        ThemeService.SetTheme(value);
-    }
-
-    void ChangeRightToLeft(bool value)
-    {
-        ThemeService.SetRightToLeft(value);
-    }
-
-    void ChangeWcag(bool value)
-    {
-        ThemeService.SetWcag(value);
-    }
-
-    protected override void OnInitialized()
-    {
-        ThemeService.ThemeChanged += OnThemeChanged;
-    }
-
-    public void Dispose()
-    {
-        ThemeService.ThemeChanged -= OnThemeChanged;
-    }
-
-    void OnThemeChanged()
-    {
-        Console.WriteLine($"Theme changed to {ThemeService.Theme}");
     }
 }

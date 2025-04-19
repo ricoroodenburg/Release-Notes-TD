@@ -1,6 +1,6 @@
 ﻿@using TopdeskReleaseNotesV2.Models
 
-<RadzenDataList Data="@notes" TItem="Note" PagerHorizontalAlign="HorizontalAlign.Left" AllowVirtualization=true Style="@($"height:78vh;overflow:auto;")" WrapItems=false AllowPaging=false>
+<RadzenDataList Data="@notes" TItem="Note" PagerHorizontalAlign="HorizontalAlign.Left" AllowVirtualization=true Style="@($"height:74vh;overflow:auto;")" WrapItems=false AllowPaging=false>
     <Template Context="note">
         @{
             string textColor = note.attentions.highlight ? "#dcf1ef" : "var (--rz-body-background-color)";
@@ -10,9 +10,7 @@
             <RadzenRow Gap="0">
                 <RadzenColumn Size="12" SizeLG="7" class="rz-p-4">
                     <RadzenRow Gap="0">
-                        <RadzenColumn Size="12" SizeMD="6" SizeLG="5">
-                            <RadzenText TextStyle="TextStyle.H6">@($"{note.release} ({note.releaseDate})")</RadzenText>
-                        </RadzenColumn>
+
                         <RadzenColumn Size="12" SizeMD="6" SizeLG="5">
                             <RadzenText TextStyle="TextStyle.H6">@(string.IsNullOrEmpty(note.category) ? "Other" : $"{note.category}{ note.subcategory}")</RadzenText>
                         </RadzenColumn>
@@ -20,6 +18,9 @@
                             <div style="white-space: normal;" @onclick:stopPropagation="true">
                                 @((MarkupString)note.descriptionHtml)
                             </div>
+                        </RadzenColumn>
+                        <RadzenColumn Size="12" SizeMD="6" SizeLG="5">
+                            <RadzenText TextStyle="TextStyle.H6">@($"Released on {note.releaseDate}, version {note.release}")</RadzenText>
                         </RadzenColumn>
                     </RadzenRow>
                 </RadzenColumn>

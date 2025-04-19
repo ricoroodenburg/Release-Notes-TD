@@ -19,13 +19,44 @@
 }
 else
 {
+    <!--
+    <RadzenRow class="rz-text-align-center" Gap="1rem">
+    <RadzenColumn class="rz-p-5">
+    <RadzenCard Variant="Radzen.Variant.Outlined" class="rz-mx-auto" Style="width: 300px; background-color: var(--rz-grid-background-color)">
+    <RadzenText Text="Released Today" TextStyle="Radzen.Blazor.TextStyle.Overline" TagName="Radzen.Blazor.TagName.H4" class="rz-mb-1" />
+    <RadzenText Text="31,861" TagName="Radzen.Blazor.TagName.P" TextStyle="Radzen.Blazor.TextStyle.H4" />
+    </RadzenCard>
+    </RadzenColumn>
+    <RadzenColumn class="rz-p-5">
+    <RadzenCard Variant="Radzen.Variant.Outlined" class="rz-mx-auto" Style="width: 300px; background-color: var(--rz-grid-background-color)">
+    <RadzenText Text="Released this week" TextStyle="Radzen.Blazor.TextStyle.Overline" TagName="Radzen.Blazor.TagName.H4" class="rz-mb-1" />
+    <RadzenText Text="31,861" TagName="Radzen.Blazor.TagName.P" TextStyle="Radzen.Blazor.TextStyle.H4" />
+    </RadzenCard>
+    </RadzenColumn>
+    <RadzenColumn class="rz-p-5">
+    <RadzenCard Variant="Radzen.Variant.Outlined" class="rz-mx-auto" Style="width: 300px; background-color: var(--rz-grid-background-color)">
+    <RadzenText Text="Released this month" TextStyle="Radzen.Blazor.TextStyle.Overline" TagName="Radzen.Blazor.TagName.H4" class="rz-mb-1" />
+    <RadzenText Text="31,861" TagName="Radzen.Blazor.TagName.P" TextStyle="Radzen.Blazor.TextStyle.H4" />
+    </RadzenCard>
+    </RadzenColumn>
+    <RadzenColumn class="rz-p-5">
+    <RadzenCard Variant="Radzen.Variant.Outlined" class="rz-mx-auto" Style="width: 300px; background-color: var(--rz-grid-background-color)">
+    <RadzenText Text="Released this year" TextStyle="Radzen.Blazor.TextStyle.Overline" TagName="Radzen.Blazor.TagName.H4" class="rz-mb-1" />
+    <RadzenText Text="31,861" TagName="Radzen.Blazor.TagName.P" TextStyle="Radzen.Blazor.TextStyle.H4" />
+    </RadzenCard>
+    </RadzenColumn>
+    </RadzenRow>
+    -->
+
     <RadzenTabs RenderMode="TabRenderMode.Server" @bind-SelectedIndex=@selectedIndex>
         <Tabs>
             <RadzenTabsItem Text="Listview" Icon="list">
                 <RadzenStack Gap="1rem" Visible=@(!mobile)>
+                    <RadzenTextBox id="search" Placeholder="Type to search..." @oninput=@(args => OnSearchChanged(args.Value)) />
                     <Datagrid notes="@notes"/>
                 </RadzenStack>
                 <RadzenStack Gap="1rem" Visible=@mobile>
+                    <RadzenTextBox id="search" Placeholder="Type to search..." @oninput=@(args => OnSearchChanged(args.Value)) />
                     <Listview notes="@notes" />
                 </RadzenStack>
             </RadzenTabsItem>
@@ -47,12 +78,20 @@ else
     private IList<Note> notes = new List<Note>();
     private IList<Appointment> appointments = new List<Appointment>();
 
+    // Search
+    private async void OnSearchChanged(object value)
+    {
+        string searchTerm = value?.ToString() ?? "";
+        string baseUrl = NavigationManager.BaseUri;
+        notes = await Http.GetFromJsonAsync<List<Note>>($"{baseUrl}api/ReleaseNotes?searchTerm={searchTerm}");
+        StateHasChanged();
+    }
+
     // On load
     protected override async Task OnInitializedAsync()
     {
         try
         {
-            
             // Define base URL
             string baseUrl = NavigationManager.BaseUri;
 
@@ -94,9 +133,8 @@ else
     {
         if (firstRender)
         {
-            // Als de pagina voor het eerst wordt gerenderd, kun je hier je JS-functie aanroepen
             mobile = await JSRuntime.InvokeAsync<bool>("isMobile", new object[] { });
-            StateHasChanged();
+            //StateHasChanged();
         }
     }
 }

@@ -1,0 +1,18 @@
+﻿@inherits LayoutComponentBase
+@using Radzen
+@using Radzen.Blazor
+
+<RadzenDialog />
+<RadzenTooltip />
+<RadzenContextMenu />
+<RadzenComponents @rendermode="InteractiveAuto" />
+<RadzenLayout>
+
+    <Sidebar />
+    <RadzenBody>
+        <Alert/>
+        <div class="rz-p-2">
+            @Body
+        </div>
+    </RadzenBody>
+</RadzenLayout>

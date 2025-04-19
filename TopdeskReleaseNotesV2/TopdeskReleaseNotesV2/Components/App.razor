@@ -9,12 +9,13 @@
         <link rel="stylesheet" href="TopdeskReleaseNotesV2.styles.css" />
         <link rel="icon" type="image/png" href="favicon.png" />
         <link rel="stylesheet" href="app.css" />
+        <link rel="stylesheet" href="css/radzen-overrides.css" />
         <script src="_content/Radzen.Blazor/Radzen.Blazor.js?v=@(typeof(Radzen.Colors).Assembly.GetName().Version)"></script>
         <script src="js/Mobile.js"></script>
         <HeadOutlet />
     </head>
     <body>
-        <Routes />
+    <TopdeskReleaseNotesV2.Client.Components.Routes @rendermode="new InteractiveServerRenderMode(prerender: false)" />
         <script src="_framework/blazor.web.js"></script>
     </body>
 </html>
@@ -33,7 +34,7 @@
 
         if (HttpContext != null)
         {
-            var theme = HttpContext.Request.Cookies["MyApplicationTheme"];
+            var theme = HttpContext.Request.Cookies["ReleaseNotesTdTheme"];
 
             if (!string.IsNullOrEmpty(theme))
             {
