@@ -3,17 +3,19 @@
 @using System.Text.Json
 @using TopdeskReleaseNotesV2.Models
 
-
 <style>
     .rz-grid-table {
     width: unset;
     }
 </style>
 
-<RadzenDataGrid Style="height:74vh; color:#525252" AllowColumnReorder="true" ShowGroupExpandColumn=false @bind-Settings="@Settings" ShowColumnTitleAsTooltip=false PageSizeOptions="@pageSizeOptions" CellRender="@CellRender" AllowMultiColumnSorting="true" ShowMultiColumnSortingIndex="true" AllowColumnPicking="true" AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.CheckBoxList" AllowSorting="true" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Center" ShowPagingSummary="true" Data="@notes" AllowGrouping="true" Render="@OnRender" @bind-Value=@selectedNotes AllowRowSelectOnRowClick=false>
+<RadzenDataGrid @ref="@releaseNoteDataGrid" Style="height:80vh; color:#525252" AllowColumnReorder="true" ShowGroupExpandColumn=false @bind-Settings="@Settings" ShowColumnTitleAsTooltip=false PageSizeOptions="@pageSizeOptions" CellRender="@CellRender" AllowMultiColumnSorting="true" ShowMultiColumnSortingIndex="true" AllowColumnPicking="true" AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.CheckBoxList" AllowSorting="true" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Center" ShowPagingSummary="true" Data="@notesFiltered" AllowGrouping="true" @bind-Value=@selectedNotes AllowRowSelectOnRowClick=false>
     <EmptyTemplate>
         <p style="color: #525252; font-size: 24px; text-align: center; margin: 2rem;">No records to display.</p>
     </EmptyTemplate>
+    <HeaderTemplate>
+        <RadzenTextBox id="search" Placeholder="Type to search..." @oninput=@(args => OnSearchChanged(args.Value)) />
+    </HeaderTemplate>
     <Columns>
         <RadzenDataGridColumn Property="@nameof(Note.release)" Title="Version" Width="5" MaxWidth="5" />
         <RadzenDataGridColumn Property="@nameof(Note.releaseDate)" Title="Release Date" FormatString="{0:d}" Visible=false />
@@ -38,7 +40,7 @@
                 }
             </Template>
         </RadzenDataGridColumn>
-        <RadzenDataGridColumn Property="@nameof(Note.hosting)" Title="Hosting" Filterable=false>
+        <RadzenDataGridColumn Property="@nameof(Note.hosting)" Title="Hosting" Filterable=false Sortable=false>
             <Template Context="data">
                 @if (data.hosting.saas)
                 {
@@ -72,32 +74,73 @@
     [Parameter]
     public IList<Note> notes { get; set; }
 
+    private IList<Note> notesFiltered;
+
+    protected override void OnParametersSet()
+    {
+        notesFiltered = notes;
+    }
+
+
     // Datagrid
+    RadzenDataGrid<Note> releaseNoteDataGrid;
     IEnumerable<int> pageSizeOptions = new int[] { 10, 20, 30, 50, 100 };
     int selectedIndex = 0;
     private IList<Note> selectedNotes = new List<Note>();
 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            // Get settings from Local Storage
+            await LoadStateAsync();
+
+            // Add predefined grouping if no settings
+            if (_settings == null)
+            {
+                releaseNoteDataGrid.Groups.Add(new GroupDescriptor() { Property = "releaseDate", SortOrder = SortOrder.Descending, Title = "Release Date" });
+            }
+
+            StateHasChanged();
+        }
+    }
+
     // Datagrid - Cell Redering
     void CellRender(DataGridCellRenderEventArgs<Note> args)
     {
-
         if (args.Data.attentions?.highlight == true)
         {
             args.Attributes.Add("style", "background-color: #dcf1ef");
         }
-
     }
 
+    /*
     // Datagrid - Grouping
     bool isFirstRender = true;
     void OnRender(DataGridRenderEventArgs<Note> args)
     {
-        if (args.FirstRender && isFirstRender)
+        if (args.FirstRender)
         {
             args.Grid.Groups.Add(new GroupDescriptor() { Property = "releaseDate", SortOrder = SortOrder.Descending, Title = "Release Date" });
-            isFirstRender = false;
-            //StateHasChanged();
+            StateHasChanged();
+            }
         }
+        */
+
+    // Datagrid - Search
+    private async void OnSearchChanged(object value)
+    {
+        string searchTerm = value?.ToString() ?? "";
+        string[] terms = searchTerm.ToLowerInvariant().Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        notesFiltered = string.IsNullOrEmpty(searchTerm) ? notes :
+            notes.Where(x =>
+                terms.All(term =>
+                    x.description.ToLowerInvariant().Contains(term)
+                    || x.release.ToLowerInvariant().Contains(term)
+                )
+            ).ToList();
+
+        StateHasChanged();
     }
 
     // Datagrid - Settings
@@ -120,35 +163,27 @@
 
     private async Task LoadStateAsync()
     {
-        await Task.CompletedTask;
-
-        var result = await JSRuntime.InvokeAsync<string>("window.localStorage.getItem", "Settings");
+        // Get settings
+        string result = await JSRuntime.InvokeAsync<string>("window.localStorage.getItem", "Settings");
         if (!string.IsNullOrEmpty(result))
         {
             _settings = JsonSerializer.Deserialize<DataGridSettings>(result);
         }
-
-
     }
 
     private async Task SaveStateAsync()
     {
-        await Task.CompletedTask;
-
+        // Save settings
         await JSRuntime.InvokeVoidAsync("window.localStorage.setItem", "Settings", JsonSerializer.Serialize<DataGridSettings>(Settings));
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            await LoadStateAsync();
-            StateHasChanged();
-        }
-    }
 
+
+    /*
     private async Task OnTabChanged()
     {
         await SaveStateAsync();
     }
+    */
+
 }

@@ -47,7 +47,10 @@
         var result = await DialogService.OpenAsync($"Version {@args.Data.Text}", ds =>
     @<RadzenStack Gap="1.5rem">
         <p>
-            <RadzenBadge Shade="Shade.Light" BadgeStyle="BadgeStyle.Warning" IsPill="true" Text=@args.Data.category />
+            <RadzenBadge BadgeStyle="BadgeStyle.Info" IsPill="true" Text=@args.Data.category Style="margin-right: 1em" />
+            @{if (!string.IsNullOrEmpty(args.Data.subcategory)){<RadzenBadge BadgeStyle="BadgeStyle.Warning" IsPill="true" Text=@args.Data.subcategory />}else{}}
+            <br />
+            <br />
             <i>
                 <div style="white-space: normal;" @onclick:stopPropagation="true">
                     @((MarkupString)args.Data.descriptionHtml)
@@ -61,7 +64,7 @@
                 <RadzenButton Text="Close" Click="() => ds.Close(true)" Style="width: 80px;" />
             </RadzenStack>
         </RadzenStack>
-    </RadzenStack>);
+    </RadzenStack>, new DialogOptions() { CloseDialogOnOverlayClick = true });
 
     }
 

@@ -52,11 +52,9 @@ else
         <Tabs>
             <RadzenTabsItem Text="Listview" Icon="list">
                 <RadzenStack Gap="1rem" Visible=@(!mobile)>
-                    <RadzenTextBox id="search" Placeholder="Type to search..." @oninput=@(args => OnSearchChanged(args.Value)) />
                     <Datagrid notes="@notes"/>
                 </RadzenStack>
                 <RadzenStack Gap="1rem" Visible=@mobile>
-                    <RadzenTextBox id="search" Placeholder="Type to search..." @oninput=@(args => OnSearchChanged(args.Value)) />
                     <Listview notes="@notes" />
                 </RadzenStack>
             </RadzenTabsItem>
@@ -75,51 +73,50 @@ else
     int selectedIndex = 0;
 
     // Define ILists
+    private Root notes2 = new Root();
     private IList<Note> notes = new List<Note>();
     private IList<Appointment> appointments = new List<Appointment>();
 
-    // Search
-    private async void OnSearchChanged(object value)
-    {
-        string searchTerm = value?.ToString() ?? "";
-        string baseUrl = NavigationManager.BaseUri;
-        notes = await Http.GetFromJsonAsync<List<Note>>($"{baseUrl}api/ReleaseNotes?searchTerm={searchTerm}");
-        StateHasChanged();
-    }
-
     // On load
+    private bool mobile { get; set; }
     protected override async Task OnInitializedAsync()
     {
         try
         {
+            // Check if client is mobile yes or no
+            mobile = await JSRuntime.InvokeAsync<bool>("isMobile", new object[] { });
+
             // Define base URL
             string baseUrl = NavigationManager.BaseUri;
 
             // Get notes from internal API
-            notes = await Http.GetFromJsonAsync<List<Note>>($"{baseUrl}api/ReleaseNotes");
-
+            //notes = await Http.GetFromJsonAsync<List<Note>>($"{baseUrl}api/ReleaseNotes");
+            notes = (await Http.GetFromJsonAsync<Root>($"{baseUrl}api/ReleaseNotes")).notes;
+            
             // Notes to appoitments
             foreach (var note in notes)
             {
                 if (DateTime.TryParse(note.releaseDate, out DateTime releaseDate))
                 {
                     var appointment = new Appointment
-                        {
-                            Start = releaseDate.Date,
-                            End = releaseDate.Date.AddDays(1).AddMinutes(-1),
-                            Text = note.release,
-                            highlight = note.attentions.highlight,
-                            description = note.description,
-                            descriptionHtml = note.descriptionHtml,
-                            category = note.category
+                    {
+                        Start = releaseDate.Date,
+                        End = releaseDate.Date.AddDays(1).AddMinutes(-1),
+                        Text = note.release,
+                        highlight = note.attentions.highlight,
+                        description = note.description,
+                        descriptionHtml = note.descriptionHtml,
+                        category = note.category,
+                        subcategory = note.subcategory
                         };
                     appointments.Add(appointment);
-                }
+                    }
                 else
                 {
                     Console.WriteLine($"Error parsing release date for release {note.release}");
+                    }
                 }
-            }
+            
 
         }
         catch (Exception ex)
@@ -127,14 +124,15 @@ else
             Console.WriteLine($"Error: {ex.Message}");
         }
     }   
-
-    private bool mobile { get; set; }
+    /*
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            mobile = await JSRuntime.InvokeAsync<bool>("isMobile", new object[] { });
+            //mobile = await JSRuntime.InvokeAsync<bool>("isMobile", new object[] { });
             //StateHasChanged();
+
+            }
         }
-    }
+        */
 }

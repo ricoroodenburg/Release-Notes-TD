@@ -5,27 +5,79 @@
 
 <h3>Release Notes</h3>
     <RadzenAccordion Multiple="true">
-        <Items>
-        <RadzenAccordionItem Text="2504.6-beta - 19/04/2025" CollapseTitle="Collapse release."
+    <Items>
+        <RadzenAccordionItem Text="2504.8-beta - 23/04/2025" CollapseTitle="Collapse release."
                              ExpandTitle="Expand orders." CollapseAriaLabel="Collapse the release details."
                              ExpandAriaLabel="Expand the release details." Selected=true>
             <RadzenStack>
                 <ul>
                     <li>
-                        <strong>Search functionality in list view:</strong><br>
-                        A search bar has been added to the list view, allowing users to quickly find specific release notes by version number or description. This makes it easier to locate relevant updates without scrolling through the full list.
+                        <strong>🚀 Improvement: Smarter search in release notes:</strong><br>
+                        The search functionality now supports multi-word and partial matches, even when words appear in a different order. This makes it easier to find relevant release notes using terms like "topdesk blank" or "blank pages shown in topdesk".
                     </li>
+                    <br>
+                    <li>
+                        <strong>🚀 Improvement: Close dialog by clicking outside (About and Release notes details in Calendar overview):</strong><br>
+                        You can now close the dialog by clicking outside of it in both the About and Release Notes details sections of the Calendar overview, improving the overall user experience.
+                    </li>
+                    <br>
 
                     <li>
-                        <strong>Persisted theme (dark/light mode) selection across sessions:</strong><br>
+                        <strong>🚀 Improvement: Added subcategory label in details dialog in Calendar overview:</strong><br>
+                        A subcategory label has been added to the details dialog in the Calendar overview, making it easier to identify and navigate to related information.
+                    </li>
+                </ul>
+            </RadzenStack>
+        </RadzenAccordionItem>
+        <RadzenAccordionItem Text="2504.7-beta - 21/04/2025" CollapseTitle="Collapse release."
+                             ExpandTitle="Expand orders." CollapseAriaLabel="Collapse the release details."
+                             ExpandAriaLabel="Expand the release details.">
+            <RadzenStack>
+                <ul>
+                    <li>
+                        <strong>🐞 Bug fix: Settings persistence across sessions:</strong><br>
+                        Fixed an issue where user settings (such as sorting, column selection, etc.) in the datagrid were lost upon page render. This was caused by an OnRender side effect. Settings are now properly preserved between sessions.
+                    </li>
+                    <br>
+                    <li>
+                        <strong>🚀 Improvement: Integrated search bar inside datagrid:</strong><br>
+                        The search functionality is now built into the datagrid itself, improving usability and making filtering more intuitive.
+                    </li>
+                    <br>
+                    <li>
+                        <strong>🚀 Improvement: Case-insensitive search:</strong><br>
+                        The search function has been improved by converting input and content to lowercase. This results in more accurate and user-friendly search results.
+                    </li>
+                    <br>
+                    <li>
+                        <strong>🚀 Improvement: Search Server-side filtering replaced with client-side filtering:</strong><br>
+                        Search functionality now uses client-side filtering instead of server-side, improving performance and responsiveness — especially on mobile devices using the listview.
+                    </li>
+                </ul>
+            </RadzenStack>
+        </RadzenAccordionItem>
+        <RadzenAccordionItem Text="2504.6-beta - 19/04/2025" CollapseTitle="Collapse release."
+                             ExpandTitle="Expand orders." CollapseAriaLabel="Collapse the release details."
+                             ExpandAriaLabel="Expand the release details.">
+            <RadzenStack>
+                <ul>
+                    <li>
+                        <strong>✨ New: Search functionality in list view:</strong><br>
+                        A search bar has been added to the list view, allowing users to quickly find specific release notes by version number or description. This makes it easier to locate relevant updates without scrolling through the full list.
+                    </li>
+                    <br>
+                    <li>
+                        <strong>🚀 Improvement: Persisted theme (dark/light mode) selection across sessions:</strong><br>
                         The selected theme is now saved in a cookie (ReleaseNotesTdTheme). This ensures that the chosen light or dark mode is remembered, even after closing the browser or navigating away. When the user returns to the application, the previously selected theme will automatically be restored for a seamless experience.
                     </li>
+                    <br>
                     <li>
-                        <strong>Client-side rendering for all pages:</strong><br>
+                        <strong>🚀 Improvement: Client-side rendering for all pages:</strong><br>
                         All pages in the application are now rendered entirely on the client side. This improves performance and provides a smoother user experience by reducing server load and allowing for faster interactions within the app.
                     </li>
+                    <br>
                     <li>
-                        <strong>Bug Fix: Content Loaded Twice on Page Load:</strong><br>
+                        <strong>🐞 Bug fix: Content Loaded Twice on Page Load:</strong><br>
                         Fixed an issue where the content was being loaded twice when the page was rendered, causing unnecessary delays. This problem has been resolved, ensuring that the content now only loads once.
                     </li>
                 </ul>
@@ -36,29 +88,64 @@
                              ExpandAriaLabel="Expand the release details.">
             <RadzenStack>
                 <ul>
-                    <li><strong>Sidebar auto-collapse on menu click:</strong><br>
-                        When a user selects an item from the sidebar, it will now automatically collapse on smaller viewports or when appropriate, streamlining the navigation flow.</li>
-                    <li><strong>Added property Subcategory in datagrid:</strong><br>
-                        A new "Subcategory" property has been added to the data grid, allowing users to further categorize and filter data for better organization and accessibility.</li>
-                    <li><strong>Create a Listview instead of datagrid for mobile / smartphone (android, iphone):</strong><br>
-                        To improve mobile responsiveness, a Listview has been implemented in place of the data grid for users accessing the app from mobile devices, such as Android and iPhone, ensuring a smoother and more user-friendly experience.</li>
-                    <li><strong>Progress indicator during loading:</strong><br>
-                        A visual loading circle has been added to inform users when data is being loaded in the background.</li>
-                    <li><strong>Merged TOPdesk buttons together in TOPdesk Resources in side menu:</strong><br>
-                        The TOPdesk buttons in the side menu have been consolidated into a single "TOPdesk Resources" section, streamlining the user interface for easier access to resources.</li>
-                    <li><strong>Add link to TOPdesk documentation portal:</strong><br>
-                        A new link to the TOPdesk documentation portal has been added, providing users with direct access to relevant documentation and resources for further learning and support.</li>
-                    <li><strong>Add link to TOPdesk product roadmap:</strong><br/>
-                        A direct link to the TOPdesk product roadmap has been included, allowing users to stay updated on upcoming features, improvements, and product releases.</li>
-                    <li><strong>Add link to TOPdesk innovation platform:</strong><br>
-                        A new link to the TOPdesk innovation platform has been introduced, enabling users to explore and engage with new ideas and innovations being developed within the TOPdesk ecosystem.</li>
-                    <li><strong>Add link to TOPdesk product update blog:</strong><br>
-                        A link to the TOPdesk product update blog has been added, keeping users informed on the latest updates, enhancements, and changes made to TOPdesk products.</li>
-                    <li><strong>Change page title to TOPdesk Release Notes:</strong><br>
-                        The page title has been updated to "TOPdesk Release Notes," providing users with a clear and concise identification of the content they are viewing.</li>
-                    <li><strong>Browser warning for Safari:</strong><br>
-                        If the app is accessed using Safari (Apple WebKit), users will now see a warning that the browser may not be fully supported.</li>
-                    <li><strong>Background: Split components on home page into separate razor files and referenced it:</strong><br>The components on the homepage have been split into separate Razor files for better organization and maintainability, making it easier to manage and reference different sections of the page.</li>
+                    <li>
+                        <strong>🚀 Improvement: Sidebar auto-collapse on menu click:</strong><br>
+                        When a user selects an item from the sidebar, it will now automatically collapse on smaller viewports or when appropriate, streamlining the navigation flow.
+                    </li>
+                    <br>
+                    <li>
+                        <strong>🚀 Improvement: Added property Subcategory in datagrid:</strong><br>
+                        A new "Subcategory" property has been added to the data grid, allowing users to further categorize and filter data for better organization and accessibility.
+                    </li>
+                    <br>
+                    <li>
+                        <strong>✨ New: Create a Listview instead of datagrid for mobile / smartphone (android, iphone):</strong><br>
+                        To improve mobile responsiveness, a Listview has been implemented in place of the data grid for users accessing the app from mobile devices, such as Android and iPhone, ensuring a smoother and more user-friendly experience.
+                    </li>
+                    <br>
+                    <li>
+                        <strong>🚀 Improvement: Progress indicator during loading:</strong><br>
+                        A visual loading circle has been added to inform users when data is being loaded in the background.
+                    </li>
+                    <br>
+                    <li>
+                        <strong>🚀 Improvement: Merged TOPdesk buttons together in TOPdesk Resources in side menu:</strong><br>
+                        The TOPdesk buttons in the side menu have been consolidated into a single "TOPdesk Resources" section, streamlining the user interface for easier access to resources.
+                    </li>
+                    <br>
+                    <li>
+                        <strong>✨ New: Add link to TOPdesk documentation portal:</strong><br>
+                        A new link to the TOPdesk documentation portal has been added, providing users with direct access to relevant documentation and resources for further learning and support.
+                    </li>
+                    <br>
+                    <li>
+                        <strong>✨ New: Add link to TOPdesk product roadmap:</strong><br />
+                        A direct link to the TOPdesk product roadmap has been included, allowing users to stay updated on upcoming features, improvements, and product releases.
+                    </li>
+                    <br>
+                    <li>
+                        <strong>✨ New: Add link to TOPdesk innovation platform:</strong><br>
+                        A new link to the TOPdesk innovation platform has been introduced, enabling users to explore and engage with new ideas and innovations being developed within the TOPdesk ecosystem.
+                    </li>
+                    <br>
+                    <li>
+                        <strong>✨ New: Add link to TOPdesk product update blog:</strong><br>
+                        A link to the TOPdesk product update blog has been added, keeping users informed on the latest updates, enhancements, and changes made to TOPdesk products.
+                    </li>
+                    <br>
+                    <li>
+                        <strong>🚀 Improvement: Change page title to TOPdesk Release Notes:</strong><br>
+                        The page title has been updated to "TOPdesk Release Notes," providing users with a clear and concise identification of the content they are viewing.
+                    </li>
+                    <br>
+                    <li>
+                        <strong>🚀 Improvement: Browser warning for Safari:</strong><br>
+                        If the app is accessed using Safari (Apple WebKit), users will now see a warning that the browser may not be fully supported.
+                    </li>
+                    <br>
+                    <li><strong>🚀 Improvement: Background: Split components on home page into separate razor files and referenced it:</strong><br>
+                        The components on the homepage have been split into separate Razor files for better organization and maintainability, making it easier to manage and reference different sections of the page.
+                    </li>
                 </ul>
             </RadzenStack>
         </RadzenAccordionItem>
@@ -67,22 +154,43 @@
                                  ExpandAriaLabel="Expand the release details.">
                 <RadzenStack>
                     <ul>
-                        <li><strong>Added a release notes page for this webapp:</strong><br>
-                            A dedicated page has been added to the web application where users can view all release notes, making it easier to track updates and improvements to the app.</li>
-                        <li><strong>Redesign to Material theme with TD colors:</strong><br>
-                            A complete redesign of the app interface using the Material theme, incorporating TD's color scheme for a more modern and consistent look.</li>
-                        <li><strong>Dark mode option:</strong><br> 
-                            Users can now switch to dark mode, making the application easier on the eyes in low-light environments.</li>
-                        <li><strong>Save datagrid filters, order, and grouping:</strong><br> 
-                            The settings for filtering, sorting, and grouping in the datagrid are now saved, ensuring a more consistent experience when navigating between views.</li>
-                        <li><strong>Icons in buttons for better accessibility:</strong><br> 
-                            Icons have been added to buttons, making the app more accessible for users by providing visual cues for each action.</li>
-                        <li><strong>Labels inside datagrid instead of text for better readability:</strong><br> 
-                            Labels are now used inside the datagrid to make the information more readable and concise for users.</li>
-                        <li><strong>Added category in release note dialog in calendar view:</strong><br> 
-                            A new category field has been added to the release note dialog in the calendar view, helping users better categorize events and notes.</li>
-                        <li><strong>Removed Day view in calendar:</strong><br> 
-                            The Day view option has been removed from the calendar, simplifying the user experience and improving navigation.</li>
+                    <li>
+                        <strong>✨ New: Added a release notes page for this webapp:</strong><br>
+                            A dedicated page has been added to the web application where users can view all release notes, making it easier to track updates and improvements to the app.</li><br>
+                    <li>
+                        <strong>🚀 Improvement: Redesign to Material theme with TD colors:</strong><br>
+                        A complete redesign of the app interface using the Material theme, incorporating TD's color scheme for a more modern and consistent look.
+                    </li>
+                    <br>
+                    <li>
+                        <strong>✨ New: Dark mode option:</strong><br>
+                        Users can now switch to dark mode, making the application easier on the eyes in low-light environments.
+                    </li>
+                    <br>
+                    <li>
+                        <strong>🚀 Improvement: Save datagrid filters, order, and grouping:</strong><br>
+                        The settings for filtering, sorting, and grouping in the datagrid are now saved, ensuring a more consistent experience when navigating between views.
+                    </li>
+                    <br>
+                    <li>
+                        <strong>🚀 Improvement: Icons in buttons for better accessibility:</strong><br>
+                        Icons have been added to buttons, making the app more accessible for users by providing visual cues for each action.
+                    </li>
+                    <br>
+                    <li>
+                        <strong>🚀 Improvement: Labels inside datagrid instead of text for better readability:</strong><br>
+                        Labels are now used inside the datagrid to make the information more readable and concise for users.
+                    </li>
+                    <br>
+                    <li>
+                        <strong>🚀 Improvement: Added category in release note dialog in calendar view:</strong><br>
+                        A new category field has been added to the release note dialog in the calendar view, helping users better categorize events and notes.
+                    </li>
+                    <br>
+                    <li>
+                        <strong>🚀 Improvement: Removed Day view in calendar:</strong><br>
+                        The Day view option has been removed from the calendar, simplifying the user experience and improving navigation.
+                    </li>
                         </ul>
                 </RadzenStack>
             </RadzenAccordionItem>
@@ -91,10 +199,15 @@
                                  ExpandAriaLabel="Expand the release details.">
                 <RadzenStack>
                         <ul>
-                            <li><strong>Added calendar overview:</strong><br>
-                                A calendar view has been added so users can quickly see which version was released on which day. There is also an option to click on a date for more detailed information about the release.</li>
-                            <li><strong>Added "number of items" option in the datagrid (list view):</strong><br>
-                                Users can now specify the number of items they want to see per page in the datagrid, offering more flexibility and control over the display.</li>
+                    <li>
+                        <strong>✨ New: Added calendar overview:</strong><br>
+                        A calendar view has been added so users can quickly see which version was released on which day. There is also an option to click on a date for more detailed information about the release.
+                    </li>
+                    <br>
+                    <li>
+                        <strong>🚀 Improvement: Added "number of items" option in the datagrid (list view):</strong><br>
+                        Users can now specify the number of items they want to see per page in the datagrid, offering more flexibility and control over the display.
+                    </li>
                         </ul>
                 </RadzenStack>
             </RadzenAccordionItem>
@@ -103,10 +216,15 @@
                                  ExpandAriaLabel="Expand the release details.">
                 <RadzenStack>
                         <ul>
-                            <li><strong>Added "Status Page" and "My Topdesk" buttons:</strong><br>
-                                Two new buttons have been added to allow users to easily navigate to the Status Page and My Topdesk websites directly from the application.</li>
-                            <li><strong>Backend update - Homepage moved to client-side:</strong><br>
-                                The homepage logic has been moved to the client side, improving performance and making the page load faster.</li>
+                    <li>
+                        <strong>✨ New: Added "Status Page" and "My Topdesk" buttons:</strong><br>
+                        Two new buttons have been added to allow users to easily navigate to the Status Page and My Topdesk websites directly from the application.
+                    </li>
+                    <br>
+                    <li>
+                        <strong>🚀 Improvement: Backend update - Homepage moved to client-side:</strong><br>
+                        The homepage logic has been moved to the client side, improving performance and making the page load faster.
+                    </li>
                         </ul>
                 </RadzenStack>
             </RadzenAccordionItem>
@@ -115,8 +233,10 @@
                                  ExpandAriaLabel="Expand the release details.">
                 <RadzenStack>
                     <ul>
-                        <li><strong>First release:</strong><br>
-                            The initial release of the application, featuring a datagrid with default filtering options for improved data navigation.</li>
+                    <li>
+                        <strong>✨ First release:</strong><br>
+                        The initial release of the application, featuring a datagrid with default filtering options for improved data navigation.
+                    </li>
                     </ul>
                 </RadzenStack>
             </RadzenAccordionItem>

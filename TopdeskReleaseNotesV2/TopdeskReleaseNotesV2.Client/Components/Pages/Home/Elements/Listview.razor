@@ -1,6 +1,7 @@
 ﻿@using TopdeskReleaseNotesV2.Models
 
-<RadzenDataList Data="@notes" TItem="Note" PagerHorizontalAlign="HorizontalAlign.Left" AllowVirtualization=true Style="@($"height:74vh;overflow:auto;")" WrapItems=false AllowPaging=false>
+<RadzenTextBox id="search" Placeholder="Type to search..." @oninput=@(args => OnSearchChanged(args.Value)) />
+<RadzenDataList Data="@notesFiltered" TItem="Note" PagerHorizontalAlign="HorizontalAlign.Left" AllowVirtualization=true Style="@($"height:74vh;overflow:auto;")" WrapItems=false AllowPaging=false>
     <Template Context="note">
         @{
             string textColor = note.attentions.highlight ? "#dcf1ef" : "var (--rz-body-background-color)";
@@ -20,7 +21,7 @@
                             </div>
                         </RadzenColumn>
                         <RadzenColumn Size="12" SizeMD="6" SizeLG="5">
-                            <RadzenText TextStyle="TextStyle.H6">@($"Released on {note.releaseDate}, version {note.release}")</RadzenText>
+                            <RadzenText TextStyle="TextStyle.H6">@($"Released on {note.releaseDate} in version {note.release}")</RadzenText>
                         </RadzenColumn>
                     </RadzenRow>
                 </RadzenColumn>
@@ -33,5 +34,27 @@
 
     [Parameter]
     public IList<Note> notes { get; set; }
+    private IList<Note> notesFiltered;
+
+    protected override void OnParametersSet()
+    {
+        notesFiltered = notes;
+    }
+
+    // Datagrid - Search
+    private async void OnSearchChanged(object value)
+    {
+        string searchTerm = value?.ToString() ?? "";
+        string[] terms = searchTerm.ToLowerInvariant().Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        notesFiltered = string.IsNullOrEmpty(searchTerm) ? notes :
+            notes.Where(x =>
+                terms.All(term =>
+                    x.description.ToLowerInvariant().Contains(term)
+                    || x.release.ToLowerInvariant().Contains(term)
+                )
+            ).ToList();
+
+        StateHasChanged();
+    }
 
 }

@@ -40,6 +40,9 @@ namespace TopdeskReleaseNotesV2.Models
     public class Root
     {
         public List<Note> notes { get; set; }
+        public long lastChecked { get; set; }
+        public DateTime lastCheckedFeature { get; set; }
+        public DateTime lastCheckedApi { get; set; }
     }
 
 

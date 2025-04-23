@@ -13,7 +13,7 @@ builder.Host.ConfigureLogging(logging =>
         .CreateLogger());
 });
 
-try { 
+try {
 
     // Add services to the container.
     builder.Services.AddRazorComponents()

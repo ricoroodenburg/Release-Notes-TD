@@ -6,4 +6,5 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
 // Radzen
 builder.Services.AddRadzenComponents();
 
+
 await builder.Build().RunAsync();
