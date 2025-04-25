@@ -44,12 +44,10 @@ namespace TopdeskReleaseNotesV2.Functions
                 switch (sourceTag)
                 {
                     case "Feature":
-                        Console.WriteLine("Ik ben hier");
                         root.lastCheckedFeature = UnixMillisecondsToDateTime(root.lastChecked, false);
                         break;
 
                     case "API":
-                        Console.WriteLine("Ik ben ook hier");
                         root.lastCheckedApi = UnixMillisecondsToDateTime(root.lastChecked, false);
                         break;
                 }
